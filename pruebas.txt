@@ -1,0 +1,10 @@
+# Crea un disco de 5MB con ajuste Worst Fit
+mkdisk -size=5 -unit=M -fit=WF -path="/home/josue/go/src/LAB-MIA-C-2S2024/output/DiscoLab.mia"
+
+fdisk -size=1 -type=P -unit=M -fit=BF -name="Particion1" -path="/home/josue/go/src/LAB-MIA-C-2S2024/output/DiscoLab.mia"
+
+mount -name="Particion1" -path="/home/josue/go/src/LAB-MIA-C-2S2024/output/DiscoLab.mia"
+
+mkfs -id=811A 
+
+

@@ -20,7 +20,7 @@ function Consola(props){
             height="50vh"
             width="100vh"
             theme="vs-dark"
-            defaultLanguage="typescript"
+            defaultLanguage="bash"
             value = {props.value}
             onChange={handlerChangeEditor}
             options={{

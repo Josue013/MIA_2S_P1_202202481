@@ -12,20 +12,24 @@ function Index() {
         setValue(text);
     }
 
-    const handlerClick = () => {
-        if (value === "") {
-            alert("No hay nada que analizar");
+    const handlerClick =  () => {
+        console.log(value); // 
+        if (value === ""){
+            alert("No puedes enviar un comando vacío");
             return;
-        }
+        } 
         Service.analisis(value)
-            .then((response) => {
-                setResponse(response);
-            })
+        .then((res) => {
+            setResponse(res.respuesta);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
     }
 
     const handlerLimpiar = () => {
-        if (value === "") {
-            alert("No hay nada que limpiar");
+        if (value === ""){
+            alert("No puedes limpiar un campo vacío");
             return;
         }
         changeText("");
@@ -33,9 +37,9 @@ function Index() {
     }
 
     const handleLoadClick = () => {
-        const input = document.createElement("input");
-        input.type = "file";
-        input.addEventListener("change", handleFileChange);
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.addEventListener('change', handleFileChange);
         input.click();
     }
 
@@ -44,7 +48,7 @@ function Index() {
         const reader = new FileReader();
         reader.onload = (e) => {
             const text = e.target.result;
-            setValue(text);
+            changeText(text);
         }
         reader.readAsText(file);
     }
@@ -74,7 +78,7 @@ function Index() {
             <div class="Consola">
             <Consola text={"Consola de Entrada"} handlerChange={changeText} value={value} />
 
-            <Consola text={"Consola de Salida"} handlerChange={changeText} value={response} readOnly />
+            <Consola text={"Consola de Salida"} handlerChange={setResponse} value={response} readOnly={true}/>
             </div>
 
         </>

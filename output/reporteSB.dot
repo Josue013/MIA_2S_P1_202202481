@@ -1,0 +1,22 @@
+digraph grid {bgcolor="#00441b" fontcolor="white" label=" Reporte SuperBlock "layout=dot labelloc = "t"edge [weigth=1000 style=dashed color=red4 dir = "both" arrowtail="open" arrowhead="open"]a0[shape=none, color=cyan, label=<
+<TABLE cellspacing="3" cellpadding="2" style="rounded" >
+<TR><TD bgcolor="white">SuperBlock</TD><TD></TD></TR>
+<TR><TD bgcolor="springgreen3">s_filesystem_type</TD><TD bgcolor="springgreen3">2</TD></TR>
+<TR><TD bgcolor="white">s_inodes_count</TD><TD bgcolor="white">919</TD></TR>
+<TR><TD bgcolor="springgreen3">s_blocks_count</TD><TD bgcolor="springgreen3">2757</TD></TR>
+<TR><TD bgcolor="white">s_free_blocks_count</TD><TD bgcolor="white">2755</TD></TR>
+<TR><TD bgcolor="springgreen3">s_free_inodes_count</TD><TD bgcolor="springgreen3">917</TD></TR>
+<TR><TD bgcolor="white">s_mtime</TD><TD bgcolor="white">2024-09-11 19:45:57</TD></TR>
+<TR><TD bgcolor="springgreen3">s_umtime</TD><TD bgcolor="springgreen3">2024-09-11 19:45:57</TD></TR>
+<TR><TD bgcolor="white">s_mnt_count</TD><TD bgcolor="white">1</TD></TR>
+<TR><TD bgcolor="springgreen3">s_magic</TD><TD bgcolor="springgreen3">61267</TD></TR>
+<TR><TD bgcolor="white">s_inode_size</TD><TD bgcolor="white">138</TD></TR>
+<TR><TD bgcolor="springgreen3">s_block_size</TD><TD bgcolor="springgreen3">64</TD></TR>
+<TR><TD bgcolor="white">s_first_ino</TD><TD bgcolor="white">0</TD></TR>
+<TR><TD bgcolor="springgreen3">s_first_blo</TD><TD bgcolor="springgreen3">0</TD></TR>
+<TR><TD bgcolor="white">s_bm_inode_start</TD><TD bgcolor="white">267</TD></TR>
+<TR><TD bgcolor="springgreen3">s_bm_block_start</TD><TD bgcolor="springgreen3">1186</TD></TR>
+<TR><TD bgcolor="white">s_inode_start</TD><TD bgcolor="white">3943</TD></TR>
+<TR><TD bgcolor="springgreen3">s_block_start</TD><TD bgcolor="springgreen3">130765</TD></TR>
+</TABLE>>];
+}

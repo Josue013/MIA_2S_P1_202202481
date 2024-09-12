@@ -1,0 +1,12 @@
+mkdisk -Size=3000 -unit=K -path="/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia"
+fdisk -Size=300 -path="/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia" -name=Particion1
+mount -path="/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia" -name=Particion1
+mkfs -type=full -id=811A
+logout
+login -user=root -pass=123 -id=811A 
+rep -id=811A -path="/home/josue/go/src/MIA_2S_P1_202202481/output/reporteDISK.pdf" -name=disk
+rep -id=811A -path="/home/josue/go/src/MIA_2S_P1_202202481/output/reporteSB.pdf" -name=sb
+rep -id=811A -path="/home/josue/go/src/MIA_2S_P1_202202481/output/reporteFILE.txt" -path_file_ls=/users.txt -name=file
+rep -id=811A -path="/home/josue/go/src/MIA_2S_P1_202202481/output/reporteMBR.pdf" -name=mbr 
+rep -id=811A -path="/home/josue/go/src/MIA_2S_P1_202202481/output/reporteINODE.pdf" -name=inode
+rep -id=811A -path="/home/josue/go/src/MIA_2S_P1_202202481/output/reporteBMINODE.txt" -name=bm_inode
