@@ -594,16 +594,16 @@ func ReporteMBR(id string, pathValor string) string {
 	// Crear el directorio si no existe
 	err := os.MkdirAll(dirPath, 0664)
 	if err != nil {
-		respuesta += "Error al crear el directorio\n"
-		fmt.Println("Error al crear el directorio")
-		return respuesta
+			respuesta += "Error al crear el directorio\n"
+			fmt.Println("Error al crear el directorio")
+			return respuesta
 	}
 
 	// Buscar la particion montada
 	indice := VerificarParticionMontada(id)
 	if indice == -1 {
-		respuesta += "La particion no esta montada"
-		return respuesta
+			respuesta += "La particion no esta montada"
+			return respuesta
 	}
 
 	MountActual := particionesMontadas[indice]
@@ -611,9 +611,9 @@ func ReporteMBR(id string, pathValor string) string {
 	// Abrir el archivo
 	archivo, err := os.OpenFile(MountActual.Path, os.O_RDWR, 0664)
 	if err != nil {
-		respuesta += "Error al abrir el archivo\n"
-		fmt.Println("Error al abrir el archivo")
-		return respuesta
+			respuesta += "Error al abrir el archivo\n"
+			fmt.Println("Error al abrir el archivo")
+			return respuesta
 	}
 	defer archivo.Close()
 
@@ -622,9 +622,9 @@ func ReporteMBR(id string, pathValor string) string {
 	archivo.Seek(int64(0), 0)
 	err = binary.Read(archivo, binary.LittleEndian, &disk)
 	if err != nil {
-		respuesta += "Error al leer el MBR\n"
-		fmt.Println("Error al leer el MBR")
-		return respuesta
+			respuesta += "Error al leer el MBR\n"
+			fmt.Println("Error al leer el MBR")
+			return respuesta
 	}
 
 	// Crear el contenido DOT
@@ -633,32 +633,36 @@ func ReporteMBR(id string, pathValor string) string {
 			tabla [label=<
 					<table border="0" cellborder="1" cellspacing="0">
 							<tr><td colspan="2" bgcolor="indigo"><font color="white">REPORTE MBR</font></td></tr>
-							<tr><td >mbr_tamano</td><td>%d</td></tr>
+							<tr><td>mbr_tamano</td><td>%d</td></tr>
 							<tr><td bgcolor="plum2">mbr_fecha_creacion</td><td bgcolor="plum2">%s</td></tr>
 							<tr><td>mbr_disk_signature</td><td>%d</td></tr>
-					`, disk.Mbr_tamano, string(disk.Mbr_fecha_creacion[:]), disk.Mbr_disk_signature)
+	`, disk.Mbr_tamano, string(disk.Mbr_fecha_creacion[:]), disk.Mbr_disk_signature)
 
 	// Agregar las particiones a la tabla
 	particiones := []Partition{disk.Mbr_partition_1, disk.Mbr_partition_2, disk.Mbr_partition_3, disk.Mbr_partition_4}
 	for i, part := range particiones {
-		if part.Part_size == 0 {
-			continue
-		}
+			if part.Part_size == 0 {
+					continue
+			}
 
-		partName := strings.TrimRight(string(part.Part_name[:]), "\x00")
-		partStatus := rune(part.Part_status[0])
-		partType := rune(part.Part_type[0])
-		partFit := rune(part.Part_fit[0])
+			partName := strings.TrimRight(string(part.Part_name[:]), "\x00")
+			partStatus := rune(part.Part_status[0])
+			partType := rune(part.Part_type[0])
+			partFit := rune(part.Part_fit[0])
 
-		dotContent += fmt.Sprintf(`
-							<tr><td colspan="2" bgcolor="#f07d7d"> PARTICIÓN %d </td></tr>
-							<tr><td>part_status</td><td>%c</td></tr>
-							<tr><td bgcolor="#f5b4af">part_type</td><td bgcolor="#f5b4af">%c</td></tr>
-							<tr><td>part_fit</td><td>%c</td></tr>
-							<tr><td bgcolor="#f5b4af">part_start</td><td bgcolor="#f5b4af">%d</td></tr>
-							<tr><td>part_size</td><td>%d</td></tr>
-							<tr><td bgcolor="#f5b4af">part_name</td><td bgcolor="#f5b4af">%s</td></tr>
-					`, i+1, partStatus, partType, partFit, part.Part_start, part.Part_size, partName)
+			dotContent += fmt.Sprintf(`
+					<tr><td colspan="2" bgcolor="#f07d7d"> PARTICIÓN %d </td></tr>
+					<tr><td>part_status</td><td>%c</td></tr>
+					<tr><td bgcolor="#f5b4af">part_type</td><td bgcolor="#f5b4af">%c</td></tr>
+					<tr><td>part_fit</td><td>%c</td></tr>
+					<tr><td bgcolor="#f5b4af">part_start</td><td bgcolor="#f5b4af">%d</td></tr>
+					<tr><td>part_size</td><td>%d</td></tr>
+					<tr><td bgcolor="#f5b4af">part_name</td><td bgcolor="#f5b4af">%s</td></tr>
+			`, i+1, partStatus, partType, partFit, part.Part_start, part.Part_size, partName)
+
+			if (partType == 'E' || partType == 'e') {
+					dotContent += recorrerEBR(MountActual.Path, part.Part_start)
+			}
 	}
 
 	// Cerrar la tabla y el contenido DOT
@@ -668,17 +672,17 @@ func ReporteMBR(id string, pathValor string) string {
 	dotFileName := dirPath + fileName + ".dot"
 	file, err := os.Create(dotFileName)
 	if err != nil {
-		fmt.Println("Error al crear el archivo .dot")
-		respuesta += "Error al crear el archivo .dot\n"
-		return respuesta
+			fmt.Println("Error al crear el archivo .dot")
+			respuesta += "Error al crear el archivo .dot\n"
+			return respuesta
 	}
 	defer file.Close()
 
 	_, err = file.WriteString(dotContent)
 	if err != nil {
-		fmt.Println("Error al escribir el archivo .dot")
-		respuesta += "Error al escribir el archivo .dot\n"
-		return respuesta
+			fmt.Println("Error al escribir el archivo .dot")
+			respuesta += "Error al escribir el archivo .dot\n"
+			return respuesta
 	}
 	fmt.Println("Archivo .dot creado")
 
@@ -690,12 +694,72 @@ func ReporteMBR(id string, pathValor string) string {
 	fmt.Println("dot -T" + extension + " " + dotFileName + " -o " + pathValor)
 	err = cmd.Run()
 	if err != nil {
-		fmt.Println("Error al crear el reporte con extension")
-		respuesta += "Error al crear el reporte con extension\n"
-		return respuesta
+			fmt.Println("Error al crear el reporte con extension")
+			respuesta += "Error al crear el reporte con extension\n"
+			return respuesta
 	}
 
 	return "Reporte MBR creado con exito\n"
+}
+
+func recorrerEBR(ruta string, whereToStart int32) string {
+	contenido := ""
+	var temp EBR
+	archivo, err := os.OpenFile(ruta, os.O_RDWR, 0664)
+	if err != nil {
+			fmt.Println("Error al abrir el archivo para leer EBR")
+			return ""
+	}
+	defer archivo.Close()
+
+	archivo.Seek(int64(whereToStart), 0)
+	err = binary.Read(archivo, binary.LittleEndian, &temp)
+	if err != nil {
+			fmt.Println("Error al leer el EBR")
+			return ""
+	}
+
+	flag := true
+	for flag {
+			if temp.Part_size == 0 {
+					flag = false
+			} else if temp.Part_next != -1 && temp.Part_mount[0] != '5' {
+					contenido += "\t\t\t<TR><TD bgcolor=\"pink\" COLSPAN=\"2\">Particion Logica</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD> part_status </TD><TD>"
+					contenido += string(temp.Part_mount[:])
+					contenido += "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD bgcolor=\"#D3D3D3\"> part_next </TD><TD bgcolor=\"#D3D3D3\">"
+					contenido += strconv.Itoa(int(temp.Part_next))
+					contenido += "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD> part_fit </TD><TD>"
+					contenido += string(temp.Part_fit[:])
+					contenido += "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD bgcolor=\"#D3D3D3\"> part_start </TD><TD bgcolor=\"#D3D3D3\">" + strconv.Itoa(int(temp.Part_start)) + "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD> part_size </TD><TD>" + strconv.Itoa(int(temp.Part_size)) + "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD bgcolor=\"#D3D3D3\"> part_name </TD><TD bgcolor=\"#D3D3D3\">" + strings.TrimRight(string(temp.Part_name[:]), "\x00") + "</TD></TR>\n"
+			} else if temp.Part_next == -1 {
+					contenido += "\t\t\t<TR><TD bgcolor=\"pink\" COLSPAN=\"2\">Particion Logica</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD> part_status </TD><TD>"
+					contenido += string(temp.Part_mount[:])
+					contenido += "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD> part_fit </TD><TD>"
+					contenido += string(temp.Part_fit[:])
+					contenido += "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD bgcolor=\"#D3D3D3\"> part_start </TD><TD bgcolor=\"#D3D3D3\">" + strconv.Itoa(int(temp.Part_start)) + "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD> part_size </TD><TD>" + strconv.Itoa(int(temp.Part_size)) + "</TD></TR>\n"
+					contenido += "\t\t\t<TR><TD bgcolor=\"#D3D3D3\"> part_name </TD><TD bgcolor=\"#D3D3D3\">" + strings.TrimRight(string(temp.Part_name[:]), "\x00") + "</TD></TR>\n"
+					flag = false
+			}
+			if temp.Part_next != -1 {
+					archivo.Seek(int64(temp.Part_next), 0)
+					err = binary.Read(archivo, binary.LittleEndian, &temp)
+					if err != nil {
+							fmt.Println("Error al leer el siguiente EBR")
+							return ""
+					}
+			}
+	}
+	return contenido
 }
 
 // REPORTE INODE

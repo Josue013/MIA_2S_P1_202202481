@@ -6,8 +6,8 @@ digraph grid {bgcolor="#00441b" fontcolor="white" label=" Reporte SuperBlock "la
 <TR><TD bgcolor="springgreen3">s_blocks_count</TD><TD bgcolor="springgreen3">2757</TD></TR>
 <TR><TD bgcolor="white">s_free_blocks_count</TD><TD bgcolor="white">2755</TD></TR>
 <TR><TD bgcolor="springgreen3">s_free_inodes_count</TD><TD bgcolor="springgreen3">917</TD></TR>
-<TR><TD bgcolor="white">s_mtime</TD><TD bgcolor="white">2024-09-11 19:45:57</TD></TR>
-<TR><TD bgcolor="springgreen3">s_umtime</TD><TD bgcolor="springgreen3">2024-09-11 19:45:57</TD></TR>
+<TR><TD bgcolor="white">s_mtime</TD><TD bgcolor="white">2024-09-13 12:32:09</TD></TR>
+<TR><TD bgcolor="springgreen3">s_umtime</TD><TD bgcolor="springgreen3">2024-09-13 12:32:09</TD></TR>
 <TR><TD bgcolor="white">s_mnt_count</TD><TD bgcolor="white">1</TD></TR>
 <TR><TD bgcolor="springgreen3">s_magic</TD><TD bgcolor="springgreen3">61267</TD></TR>
 <TR><TD bgcolor="white">s_inode_size</TD><TD bgcolor="white">138</TD></TR>

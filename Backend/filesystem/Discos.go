@@ -32,14 +32,14 @@ func CrearDiscos(size int, unit string, fit string, pathValor string) string {
 		return respuesta
 	}
 	//Crear el directorio
-	err := os.MkdirAll(dirPath, 0664)
+	err := os.MkdirAll(dirPath, 0777)
 	if err != nil {
 		fmt.Println("Error: No se pudo crear el directorio")
 		respuesta += "Error: No se pudo crear el directorio\n"
 		return respuesta
 	}
 	//Crear el archivo
-	archivo, err := os.Create(pathValor)
+	archivo, err := os.OpenFile(pathValor, os.O_RDWR|os.O_CREATE, 0644) // Cambiar permisos a 0644
 	if err != nil {
 		fmt.Println("Error: No se pudo crear el archivo")
 		respuesta += "Error: No se pudo crear el archivo\n"

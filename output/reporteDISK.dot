@@ -1,2 +1,2 @@
-digraph grid {bgcolor="darkslategray" label=" Reporte Disk "layout=dot compound=true labelloc = "t"edge [weigth=1000 style=dashed color=red4 dir = "both" arrowtail="open" arrowhead="open"]node[shape=record, color=darkslategray1, fontname="Helvetica"]a0[label="MBR|Primaria\n10.00%\n|Libre\n90.00%\n"];
+digraph grid {bgcolor="darkslategray" label=" Reporte Disk "layout=dot compound=true labelloc = "t"edge [weigth=1000 style=dashed color=red4 dir = "both" arrowtail="open" arrowhead="open"]node[shape=record, color=darkslategray1, fontname="Helvetica"]a0[label="MBR|Primaria\n10.00%\n|{Extendida|{EBR|Logica\n6.67%\n|Libre\n3.33%\n}}|Primaria\n33.33%\n|Libre\n46.67%\n"];
 }
