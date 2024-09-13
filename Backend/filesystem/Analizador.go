@@ -118,7 +118,15 @@ func AnalizarComando(comando string) string {
 				comandoSeparadoString := strings.Join(comandoSeparado, " ")
 				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
 				return respuesta
-
+			} else if valor == "cat"{
+				fmt.Println("====== Comando cat ======")
+				respuesta += "Ejecutando comando cat\n"
+				//Analizar el comando cat
+				respuesta += AnalizarCat(&comandoSeparado) + "\n"
+				//Pasar a string el comando separado
+				comandoSeparadoString := strings.Join(comandoSeparado, " ")
+				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
+				return respuesta //Terminar la funcion
 			} else if valor == "\n" {
 				continue
 			} else if valor == "\r" {
@@ -891,6 +899,73 @@ func analizarLogout(comandoSeparado *[]string) string {
 	//Llamar a la funcion logout
 	respuesta += Logout()
 	return respuesta
+}
+
+func AnalizarCat(comandoSeparado *[]string) string {
+	var respuesta string
+	//Eliminar el primer valor del comandoSeparado
+	*comandoSeparado = (*comandoSeparado)[1:]
+	//Booleanos para verificar si se ingreso el parametro obligatorio
+	var file bool
+	//Variables para guardar los valores de los parametros
+	var fileValores []string
+	//Recorrer el comandoSeparado
+	for i := 0; i < len(*comandoSeparado); i++ {
+			valor := (*comandoSeparado)[i]
+			bandera := obtenerBandera(valor)
+			banderaValor := obtenerValor(valor)
+			if strings.HasPrefix(bandera, "-file") {
+					file = true
+					// Verificar si el file tiene comillas
+					if strings.HasPrefix(banderaValor, "\"") && strings.HasSuffix(banderaValor, "\"") {
+							// Eliminar las comillas del inicio y del final
+							banderaValor = strings.TrimPrefix(banderaValor, "\"")
+							banderaValor = strings.TrimSuffix(banderaValor, "\"")
+							fileValores = append(fileValores, banderaValor)
+					} else if strings.HasPrefix(banderaValor, "\"") {
+							// Eliminar las comillas del inicio
+							banderaValor = strings.TrimPrefix(banderaValor, "\"")
+							// Inicializar fileValor con el valor actual
+							fileValor := banderaValor
+							// Iterar sobre el comando
+							for j := i + 1; j < len(*comandoSeparado); j++ {
+									valor := (*comandoSeparado)[j]
+									// Si el valor contiene comillas
+									if strings.HasSuffix(valor, "\"") {
+											// Eliminar las comillas del final
+											valor = strings.TrimSuffix(valor, "\"")
+											// Agregar el valor al file
+											fileValor += " " + valor
+											i = j
+											break
+									} else {
+											// Agregar el valor al file
+											fileValor += " " + valor
+									}
+							}
+							fileValores = append(fileValores, fileValor)
+					} else {
+							fileValores = append(fileValores, banderaValor)
+					}
+			} else {
+					fmt.Println("Parametro no reconocido: ", bandera)
+					respuesta += "Parametro no reconocido: " + bandera + "\n"
+			}
+	}
+	//Verificar si se ingreso el parametro obligatorio
+	if !file {
+			fmt.Println("No se ingreso el parametro obligatorio file")
+			respuesta += "No se ingreso el parametro obligatorio file\n"
+			return respuesta
+	} else {
+			//Imprimir los valores y ejecutar el comando
+			for _, fileValor := range fileValores {
+					fmt.Println("File: ", fileValor)
+			}
+			//Llamar a la funcion para mostrar el contenido de los archivos
+			respuesta += Cat(fileValores)
+			return respuesta
+	}
 }
 
 func obtenerBandera(bandera string) string {

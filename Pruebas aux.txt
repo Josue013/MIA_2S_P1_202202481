@@ -15,7 +15,7 @@ mkdisk -size=10 -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab4.mi
 #------------- rmdisk ---------------
 
 #Elimina DiscoLab4.mia
-rmdisk -path="/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab4.mia"
+rmdisk -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab4.mia
 
 #------------- fdisk -----------------
 
@@ -47,6 +47,12 @@ mkfs -type=full -id=811A
 
 #Realiza un formateo completo de la particion que ocupa el id 812A
 mkfs -id=812A
+
+#--------------- cat -----------------------
+#Lee el archivo a.txt
+cat -file1=/home/josue/go/src/MIA_2S_P1_202202481/output/a.txt 
+
+cat -file1="/home/josue/go/src/MIA_2S_P1_202202481/output/a.txt" -file2="/home/josue/go/src/MIA_2S_P1_202202481/output/b.txt" -file3="/home/josue/go/src/MIA_2S_P1_202202481/output/c.txt"
 
 #--------------- logout --------------------
 
