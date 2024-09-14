@@ -118,11 +118,29 @@ func AnalizarComando(comando string) string {
 				comandoSeparadoString := strings.Join(comandoSeparado, " ")
 				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
 				return respuesta
-			} else if valor == "cat"{
+			} else if valor == "cat" {
 				fmt.Println("====== Comando cat ======")
 				respuesta += "Ejecutando comando cat\n"
 				//Analizar el comando cat
 				respuesta += AnalizarCat(&comandoSeparado) + "\n"
+				//Pasar a string el comando separado
+				comandoSeparadoString := strings.Join(comandoSeparado, " ")
+				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
+				return respuesta //Terminar la funcion
+			} else if valor == "mkfile" {
+				fmt.Println("====== Comando mkfile ======")
+				respuesta += "Ejecutando comando mkfile\n"
+				//Analizar el comando mkfile
+				respuesta += AnalizarMkfile(&comandoSeparado) + "\n"
+				//Pasar a string el comando separado
+				comandoSeparadoString := strings.Join(comandoSeparado, " ")
+				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
+				return respuesta //Terminar la funcion
+			} else if valor == "mkdir" {
+				fmt.Println("====== Comando mkdir ======")
+				respuesta += "Ejecutando comando mkdir\n"
+				//Analizar el comando mkdir
+				respuesta += AnalizarMkdir(&comandoSeparado) + "\n"
 				//Pasar a string el comando separado
 				comandoSeparadoString := strings.Join(comandoSeparado, " ")
 				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
@@ -183,39 +201,39 @@ func AnalizarMkdisk(comando *[]string) string {
 			// Verificar si el path tiene comillas
 			// -path="/home 1/mis discos/Disco3.mia"
 			if strings.Contains(banderaValor, "\"") {
-					// Eliminar las comillas del inicio
-					banderaValor = strings.Replace(banderaValor, "\"", "", -1)
-					// Inicializar valorPath con el valor actual
-					valorPath = banderaValor
-					// Eliminar el primer valor del comandoSeparado
-					*comando = (*comando)[1:]
-					// Iterar sobre el comando
-					Contador := 0
-					for _, valor := range *comando {
-							// Si el valor contiene comillas
-							if strings.Contains(valor, "\"") {
-									// Eliminar las comillas del final
-									valor = strings.Replace(valor, "\"", "", -1)
-									// Agregar el valor al path
-									valorPath += " " + valor
-									Contador++
-									break
-							} else {
-									// Agregar el valor al path
-									valorPath += " " + valor
-									Contador++
-							}
+				// Eliminar las comillas del inicio
+				banderaValor = strings.Replace(banderaValor, "\"", "", -1)
+				// Inicializar valorPath con el valor actual
+				valorPath = banderaValor
+				// Eliminar el primer valor del comandoSeparado
+				*comando = (*comando)[1:]
+				// Iterar sobre el comando
+				Contador := 0
+				for _, valor := range *comando {
+					// Si el valor contiene comillas
+					if strings.Contains(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.Replace(valor, "\"", "", -1)
+						// Agregar el valor al path
+						valorPath += " " + valor
+						Contador++
+						break
+					} else {
+						// Agregar el valor al path
+						valorPath += " " + valor
+						Contador++
 					}
-					// Eliminar los valores del comando
-					*comando = (*comando)[Contador:]
+				}
+				// Eliminar los valores del comando
+				*comando = (*comando)[Contador:]
 			} else {
-					valorPath = banderaValor
-					*comando = (*comando)[1:]
+				valorPath = banderaValor
+				*comando = (*comando)[1:]
 			}
-	} else {
+		} else {
 			fmt.Println("Error: Parametro no reconocida")
 			respuesta += "Error: Parametro no reconocida\n"
-	}
+		}
 
 	}
 	if !size {
@@ -291,39 +309,39 @@ func AnalizarRmdisk(comando *[]string) string {
 			// Verificar si el path tiene comillas
 			// -path="/home 1/mis discos/Disco3.mia"
 			if strings.Contains(banderaValor, "\"") {
-					// Eliminar las comillas del inicio
-					banderaValor = strings.Replace(banderaValor, "\"", "", -1)
-					// Inicializar valorPath con el valor actual
-					valorPath = banderaValor
-					// Eliminar el primer valor del comandoSeparado
-					*comando = (*comando)[1:]
-					// Iterar sobre el comando
-					Contador := 0
-					for _, valor := range *comando {
-							// Si el valor contiene comillas
-							if strings.Contains(valor, "\"") {
-									// Eliminar las comillas del final
-									valor = strings.Replace(valor, "\"", "", -1)
-									// Agregar el valor al path
-									valorPath += " " + valor
-									Contador++
-									break
-							} else {
-									// Agregar el valor al path
-									valorPath += " " + valor
-									Contador++
-							}
+				// Eliminar las comillas del inicio
+				banderaValor = strings.Replace(banderaValor, "\"", "", -1)
+				// Inicializar valorPath con el valor actual
+				valorPath = banderaValor
+				// Eliminar el primer valor del comandoSeparado
+				*comando = (*comando)[1:]
+				// Iterar sobre el comando
+				Contador := 0
+				for _, valor := range *comando {
+					// Si el valor contiene comillas
+					if strings.Contains(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.Replace(valor, "\"", "", -1)
+						// Agregar el valor al path
+						valorPath += " " + valor
+						Contador++
+						break
+					} else {
+						// Agregar el valor al path
+						valorPath += " " + valor
+						Contador++
 					}
-					// Eliminar los valores del comando
-					*comando = (*comando)[Contador:]
+				}
+				// Eliminar los valores del comando
+				*comando = (*comando)[Contador:]
 			} else {
-					valorPath = banderaValor
-					*comando = (*comando)[1:]
+				valorPath = banderaValor
+				*comando = (*comando)[1:]
 			}
-	} else {
+		} else {
 			fmt.Println("Error: Parametro no reconocida")
 			respuesta += "Error: Parametro no reconocida\n"
-	}
+		}
 	}
 	//Obligatorios: path
 	if !path {
@@ -387,39 +405,39 @@ func AnalizarFdisk(comando *[]string) string {
 			// Verificar si el path tiene comillas
 			// -path="/home 1/mis discos/Disco3.mia"
 			if strings.Contains(banderaValor, "\"") {
-					// Eliminar las comillas del inicio
-					banderaValor = strings.Replace(banderaValor, "\"", "", -1)
-					// Inicializar valorPath con el valor actual
-					valorPath = banderaValor
-					// Eliminar el primer valor del comandoSeparado
-					*comando = (*comando)[1:]
-					// Iterar sobre el comando
-					Contador := 0
-					for _, valor := range *comando {
-							// Si el valor contiene comillas
-							if strings.Contains(valor, "\"") {
-									// Eliminar las comillas del final
-									valor = strings.Replace(valor, "\"", "", -1)
-									// Agregar el valor al path
-									valorPath += " " + valor
-									Contador++
-									break
-							} else {
-									// Agregar el valor al path
-									valorPath += " " + valor
-									Contador++
-							}
+				// Eliminar las comillas del inicio
+				banderaValor = strings.Replace(banderaValor, "\"", "", -1)
+				// Inicializar valorPath con el valor actual
+				valorPath = banderaValor
+				// Eliminar el primer valor del comandoSeparado
+				*comando = (*comando)[1:]
+				// Iterar sobre el comando
+				Contador := 0
+				for _, valor := range *comando {
+					// Si el valor contiene comillas
+					if strings.Contains(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.Replace(valor, "\"", "", -1)
+						// Agregar el valor al path
+						valorPath += " " + valor
+						Contador++
+						break
+					} else {
+						// Agregar el valor al path
+						valorPath += " " + valor
+						Contador++
 					}
-					// Eliminar los valores del comando
-					*comando = (*comando)[Contador:]
+				}
+				// Eliminar los valores del comando
+				*comando = (*comando)[Contador:]
 			} else {
-					valorPath = banderaValor
-					*comando = (*comando)[1:]
+				valorPath = banderaValor
+				*comando = (*comando)[1:]
 			}
-	} else {
+		} else {
 			fmt.Println("Error: Parametro no reconocida")
 			respuesta += "Error: Parametro no reconocida\n"
-	}
+		}
 	}
 	//Obligatorios: name, path y size
 	if !name {
@@ -502,68 +520,68 @@ func analizarMount(comandoSeparado *[]string) string {
 	var pathValor, nameValor string
 	//Iterar sobre el comando separado
 	for _, valor := range *comandoSeparado {
-			bandera := obtenerBandera(valor)
-			banderaValor := obtenerValor(valor)
-			if bandera == "-path" {
-					banderaPath = true
-					// Verificar si el path tiene comillas
-					// -path="/home 1/mis discos/Disco3.mia"
-					if strings.Contains(banderaValor, "\"") {
-							// Eliminar las comillas del inicio
-							banderaValor = strings.Replace(banderaValor, "\"", "", -1)
-							// Inicializar pathValor con el valor actual
-							pathValor = banderaValor
-							// Eliminar el primer valor del comandoSeparado
-							*comandoSeparado = (*comandoSeparado)[1:]
-							// Iterar sobre el comando
-							Contador := 0
-							for _, valor := range *comandoSeparado {
-									// Si el valor contiene comillas
-									if strings.Contains(valor, "\"") {
-											// Eliminar las comillas del final
-											valor = strings.Replace(valor, "\"", "", -1)
-											// Agregar el valor al path
-											pathValor += " " + valor
-											Contador++
-											break
-									} else {
-											// Agregar el valor al path
-											pathValor += " " + valor
-											Contador++
-									}
-							}
-							// Eliminar los valores del comando
-							*comandoSeparado = (*comandoSeparado)[Contador:]
+		bandera := obtenerBandera(valor)
+		banderaValor := obtenerValor(valor)
+		if bandera == "-path" {
+			banderaPath = true
+			// Verificar si el path tiene comillas
+			// -path="/home 1/mis discos/Disco3.mia"
+			if strings.Contains(banderaValor, "\"") {
+				// Eliminar las comillas del inicio
+				banderaValor = strings.Replace(banderaValor, "\"", "", -1)
+				// Inicializar pathValor con el valor actual
+				pathValor = banderaValor
+				// Eliminar el primer valor del comandoSeparado
+				*comandoSeparado = (*comandoSeparado)[1:]
+				// Iterar sobre el comando
+				Contador := 0
+				for _, valor := range *comandoSeparado {
+					// Si el valor contiene comillas
+					if strings.Contains(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.Replace(valor, "\"", "", -1)
+						// Agregar el valor al path
+						pathValor += " " + valor
+						Contador++
+						break
 					} else {
-							pathValor = banderaValor
-							*comandoSeparado = (*comandoSeparado)[1:]
+						// Agregar el valor al path
+						pathValor += " " + valor
+						Contador++
 					}
-			} else if bandera == "-name" {
-					banderaName = true
-					nameValor = banderaValor
-					*comandoSeparado = (*comandoSeparado)[1:]
+				}
+				// Eliminar los valores del comando
+				*comandoSeparado = (*comandoSeparado)[Contador:]
 			} else {
-					fmt.Println("Parametro no reconocido: ", bandera)
-					respuesta += "Parametro no reconocido: " + bandera + "\n"
+				pathValor = banderaValor
+				*comandoSeparado = (*comandoSeparado)[1:]
 			}
+		} else if bandera == "-name" {
+			banderaName = true
+			nameValor = banderaValor
+			*comandoSeparado = (*comandoSeparado)[1:]
+		} else {
+			fmt.Println("Parametro no reconocido: ", bandera)
+			respuesta += "Parametro no reconocido: " + bandera + "\n"
+		}
 	}
 	// Obligatorios: -path, -name
 	// Verificar si se ingresaron los parametros obligatorios
 	if !banderaPath {
-			fmt.Println("El parametro -path es obligatorio")
-			respuesta += "El parametro -path es obligatorio\n"
-			return respuesta
+		fmt.Println("El parametro -path es obligatorio")
+		respuesta += "El parametro -path es obligatorio\n"
+		return respuesta
 	} else if !banderaName {
-			fmt.Println("El parametro -name es obligatorio")
-			respuesta += "El parametro -name es obligatorio\n"
-			return respuesta
+		fmt.Println("El parametro -name es obligatorio")
+		respuesta += "El parametro -name es obligatorio\n"
+		return respuesta
 	} else {
-			// Imprimir los valores de los parametros
-			fmt.Println("Path: ", pathValor)
-			fmt.Println("Name: ", nameValor)
-			// Llamar a la funcion para montar la particion
-			respuesta += MountPartition(pathValor, nameValor)
-			return respuesta
+		// Imprimir los valores de los parametros
+		fmt.Println("Path: ", pathValor)
+		fmt.Println("Name: ", nameValor)
+		// Llamar a la funcion para montar la particion
+		respuesta += MountPartition(pathValor, nameValor)
+		return respuesta
 	}
 }
 
@@ -721,174 +739,174 @@ func AnalizarRep(comandoSeparado *[]string) string {
 	var idValor, nameValor, path_file_fsValor, pathValor string
 	//Recorrer el comandoSeparado
 	for _, valor := range *comandoSeparado {
-			bandera := obtenerBandera(valor)
-			banderaValor := obtenerValor(valor)
-			if bandera == "-id" {
-					id = true
-					idValor = banderaValor
-					*comandoSeparado = (*comandoSeparado)[1:]
-			} else if bandera == "-name" {
-					name = true
-					nameValor = banderaValor
-					//Pasar el valor a minusculas
-					nameValor = strings.ToLower(nameValor)
-					*comandoSeparado = (*comandoSeparado)[1:]
-			} else if bandera == "-path_file_ls" {
-					// Verificar si el path tiene comillas
-					// -path_file_ls="/home 1/mis discos/Disco3.mia"
-					if strings.Contains(banderaValor, "\"") {
-							// Eliminar las comillas del inicio
-							banderaValor = strings.Replace(banderaValor, "\"", "", -1)
-							// Inicializar path_file_fsValor con el valor actual
-							path_file_fsValor = banderaValor
-							// Eliminar el primer valor del comandoSeparado
-							*comandoSeparado = (*comandoSeparado)[1:]
-							// Iterar sobre el comando
-							Contador := 0
-							for _, valor := range *comandoSeparado {
-									// Si el valor contiene comillas
-									if strings.Contains(valor, "\"") {
-											// Eliminar las comillas del final
-											valor = strings.Replace(valor, "\"", "", -1)
-											// Agregar el valor al path
-											path_file_fsValor += " " + valor
-											Contador++
-											break
-									} else {
-											// Agregar el valor al path
-											path_file_fsValor += " " + valor
-											Contador++
-									}
-							}
-							// Eliminar los valores del comando
-							*comandoSeparado = (*comandoSeparado)[Contador:]
+		bandera := obtenerBandera(valor)
+		banderaValor := obtenerValor(valor)
+		if bandera == "-id" {
+			id = true
+			idValor = banderaValor
+			*comandoSeparado = (*comandoSeparado)[1:]
+		} else if bandera == "-name" {
+			name = true
+			nameValor = banderaValor
+			//Pasar el valor a minusculas
+			nameValor = strings.ToLower(nameValor)
+			*comandoSeparado = (*comandoSeparado)[1:]
+		} else if bandera == "-path_file_ls" {
+			// Verificar si el path tiene comillas
+			// -path_file_ls="/home 1/mis discos/Disco3.mia"
+			if strings.Contains(banderaValor, "\"") {
+				// Eliminar las comillas del inicio
+				banderaValor = strings.Replace(banderaValor, "\"", "", -1)
+				// Inicializar path_file_fsValor con el valor actual
+				path_file_fsValor = banderaValor
+				// Eliminar el primer valor del comandoSeparado
+				*comandoSeparado = (*comandoSeparado)[1:]
+				// Iterar sobre el comando
+				Contador := 0
+				for _, valor := range *comandoSeparado {
+					// Si el valor contiene comillas
+					if strings.Contains(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.Replace(valor, "\"", "", -1)
+						// Agregar el valor al path
+						path_file_fsValor += " " + valor
+						Contador++
+						break
 					} else {
-							path_file_fsValor = banderaValor
-							*comandoSeparado = (*comandoSeparado)[1:]
+						// Agregar el valor al path
+						path_file_fsValor += " " + valor
+						Contador++
 					}
-					path_file_ls = true
-			} else if bandera == "-path" {
-					// Verificar si el path tiene comillas
-					// -path="/home 1/mis discos/Disco3.mia"
-					if strings.Contains(banderaValor, "\"") {
-							// Eliminar las comillas del inicio
-							banderaValor = strings.Replace(banderaValor, "\"", "", -1)
-							// Inicializar pathValor con el valor actual
-							pathValor = banderaValor
-							// Eliminar el primer valor del comandoSeparado
-							*comandoSeparado = (*comandoSeparado)[1:]
-							// Iterar sobre el comando
-							Contador := 0
-							for _, valor := range *comandoSeparado {
-									// Si el valor contiene comillas
-									if strings.Contains(valor, "\"") {
-											// Eliminar las comillas del final
-											valor = strings.Replace(valor, "\"", "", -1)
-											// Agregar el valor al path
-											pathValor += " " + valor
-											Contador++
-											break
-									} else {
-											// Agregar el valor al path
-											pathValor += " " + valor
-											Contador++
-									}
-							}
-							// Eliminar los valores del comando
-							*comandoSeparado = (*comandoSeparado)[Contador:]
-					} else {
-							pathValor = banderaValor
-							*comandoSeparado = (*comandoSeparado)[1:]
-					}
-					path = true
+				}
+				// Eliminar los valores del comando
+				*comandoSeparado = (*comandoSeparado)[Contador:]
 			} else {
-					fmt.Println("Parametro no reconocido")
-					respuesta += "Parametro no reconocido\n"
+				path_file_fsValor = banderaValor
+				*comandoSeparado = (*comandoSeparado)[1:]
 			}
+			path_file_ls = true
+		} else if bandera == "-path" {
+			// Verificar si el path tiene comillas
+			// -path="/home 1/mis discos/Disco3.mia"
+			if strings.Contains(banderaValor, "\"") {
+				// Eliminar las comillas del inicio
+				banderaValor = strings.Replace(banderaValor, "\"", "", -1)
+				// Inicializar pathValor con el valor actual
+				pathValor = banderaValor
+				// Eliminar el primer valor del comandoSeparado
+				*comandoSeparado = (*comandoSeparado)[1:]
+				// Iterar sobre el comando
+				Contador := 0
+				for _, valor := range *comandoSeparado {
+					// Si el valor contiene comillas
+					if strings.Contains(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.Replace(valor, "\"", "", -1)
+						// Agregar el valor al path
+						pathValor += " " + valor
+						Contador++
+						break
+					} else {
+						// Agregar el valor al path
+						pathValor += " " + valor
+						Contador++
+					}
+				}
+				// Eliminar los valores del comando
+				*comandoSeparado = (*comandoSeparado)[Contador:]
+			} else {
+				pathValor = banderaValor
+				*comandoSeparado = (*comandoSeparado)[1:]
+			}
+			path = true
+		} else {
+			fmt.Println("Parametro no reconocido")
+			respuesta += "Parametro no reconocido\n"
+		}
 	}
 	//Verificar si se ingreso el parametro obligatorio
 	if !id {
-			fmt.Println("No se ingreso el parametro obligatorio id")
-			respuesta += "No se ingreso el parametro obligatorio id\n"
-			return respuesta
+		fmt.Println("No se ingreso el parametro obligatorio id")
+		respuesta += "No se ingreso el parametro obligatorio id\n"
+		return respuesta
 	} else if !name {
-			fmt.Println("No se ingreso el parametro obligatorio name")
-			respuesta += "No se ingreso el parametro obligatorio name\n"
-			return respuesta
+		fmt.Println("No se ingreso el parametro obligatorio name")
+		respuesta += "No se ingreso el parametro obligatorio name\n"
+		return respuesta
 	} else if !path {
-			fmt.Println("No se ingreso el parametro obligatorio path")
-			respuesta += "No se ingreso el parametro obligatorio path\n"
-			return respuesta
+		fmt.Println("No se ingreso el parametro obligatorio path")
+		respuesta += "No se ingreso el parametro obligatorio path\n"
+		return respuesta
 	} else {
-			if nameValor == "disk" {
-					//Imprimir los valores y ejecutar el comando
-					fmt.Println("id: ", idValor)
-					fmt.Println("name: ", nameValor)
-					fmt.Println("path: ", pathValor)
-					//Ejecutar el comando
-					respuesta += ReporteDisk(idValor, pathValor)
-					return respuesta
-			} else if nameValor == "file" {
-					if !path_file_ls {
-							fmt.Println("No se ingreso el parametro obligatorio path_file_ls")
-							respuesta += "No se ingreso el parametro obligatorio path_file_ls\n"
-							return respuesta
-					} else {
-							//Imprimir los valores y ejecutar el comando
-							fmt.Println("id: ", idValor)
-							fmt.Println("name: ", nameValor)
-							fmt.Println("path: ", pathValor)
-							fmt.Println("path_file_ls: ", path_file_fsValor)
-							//Ejecutar el comando
-							respuesta += ReporteFile(idValor, pathValor, path_file_fsValor)
-							return respuesta
-					}
-			} else if nameValor == "sb" {
-					//Imprimir los valores y ejecutar el comando
-					fmt.Println("id: ", idValor)
-					fmt.Println("name: ", nameValor)
-					fmt.Println("path: ", pathValor)
-					//Ejecutar el comando
-					respuesta += ReporteSB(idValor, pathValor)
-					return respuesta
-			} else if nameValor == "mbr" {
-					//Imprimir los valores y ejecutar el comando
-					fmt.Println("id: ", idValor)
-					fmt.Println("name: ", nameValor)
-					fmt.Println("path: ", pathValor)
-					//Ejecutar el comando
-					respuesta += ReporteMBR(idValor, pathValor)
-					return respuesta
-			} else if nameValor == "inode" {
-					//Imprimir los valores y ejecutar el comando
-					fmt.Println("id: ", idValor)
-					fmt.Println("name: ", nameValor)
-					fmt.Println("path: ", pathValor)
-					//Ejecutar el comando
-					respuesta += ReporteInode(idValor, pathValor)
-					return respuesta
-			} else if nameValor == "bm_inode" {
-					//Imprimir los valores y ejecutar el comando
-					fmt.Println("id: ", idValor)
-					fmt.Println("name: ", nameValor)
-					fmt.Println("path: ", pathValor)
-					//Ejecutar el comando
-					respuesta += ReporteBmInode(idValor, pathValor)
-					return respuesta
+		if nameValor == "disk" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteDisk(idValor, pathValor)
+			return respuesta
+		} else if nameValor == "file" {
+			if !path_file_ls {
+				fmt.Println("No se ingreso el parametro obligatorio path_file_ls")
+				respuesta += "No se ingreso el parametro obligatorio path_file_ls\n"
+				return respuesta
 			} else {
-					fmt.Println("Los valores de name deben ser: disk, sb, tree o file")
-					respuesta += "Los valores de name deben ser: disk, sb, tree o file\n"
-					return respuesta
+				//Imprimir los valores y ejecutar el comando
+				fmt.Println("id: ", idValor)
+				fmt.Println("name: ", nameValor)
+				fmt.Println("path: ", pathValor)
+				fmt.Println("path_file_ls: ", path_file_fsValor)
+				//Ejecutar el comando
+				respuesta += ReporteFile(idValor, pathValor, path_file_fsValor)
+				return respuesta
 			}
-			/*else if nameValor == "tree" {
-					//Imprimir los valores y ejecutar el comando
-					fmt.Println("id: ", idValor)
-					fmt.Println("name: ", nameValor)
-					fmt.Println("path: ", pathValor)
-					//Ejecutar el comando
-					respuesta += ReporteTree(idValor, pathValor)
-					return respuesta
-			}*/
+		} else if nameValor == "sb" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteSB(idValor, pathValor)
+			return respuesta
+		} else if nameValor == "mbr" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteMBR(idValor, pathValor)
+			return respuesta
+		} else if nameValor == "inode" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteInode(idValor, pathValor)
+			return respuesta
+		} else if nameValor == "bm_inode" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteBmInode(idValor, pathValor)
+			return respuesta
+		} else {
+			fmt.Println("Los valores de name deben ser: disk, sb, tree o file")
+			respuesta += "Los valores de name deben ser: disk, sb, tree o file\n"
+			return respuesta
+		}
+		/*else if nameValor == "tree" {
+				//Imprimir los valores y ejecutar el comando
+				fmt.Println("id: ", idValor)
+				fmt.Println("name: ", nameValor)
+				fmt.Println("path: ", pathValor)
+				//Ejecutar el comando
+				respuesta += ReporteTree(idValor, pathValor)
+				return respuesta
+		}*/
 	}
 }
 
@@ -911,61 +929,211 @@ func AnalizarCat(comandoSeparado *[]string) string {
 	var fileValores []string
 	//Recorrer el comandoSeparado
 	for i := 0; i < len(*comandoSeparado); i++ {
-			valor := (*comandoSeparado)[i]
-			bandera := obtenerBandera(valor)
-			banderaValor := obtenerValor(valor)
-			if strings.HasPrefix(bandera, "-file") {
-					file = true
-					// Verificar si el file tiene comillas
-					if strings.HasPrefix(banderaValor, "\"") && strings.HasSuffix(banderaValor, "\"") {
-							// Eliminar las comillas del inicio y del final
-							banderaValor = strings.TrimPrefix(banderaValor, "\"")
-							banderaValor = strings.TrimSuffix(banderaValor, "\"")
-							fileValores = append(fileValores, banderaValor)
-					} else if strings.HasPrefix(banderaValor, "\"") {
-							// Eliminar las comillas del inicio
-							banderaValor = strings.TrimPrefix(banderaValor, "\"")
-							// Inicializar fileValor con el valor actual
-							fileValor := banderaValor
-							// Iterar sobre el comando
-							for j := i + 1; j < len(*comandoSeparado); j++ {
-									valor := (*comandoSeparado)[j]
-									// Si el valor contiene comillas
-									if strings.HasSuffix(valor, "\"") {
-											// Eliminar las comillas del final
-											valor = strings.TrimSuffix(valor, "\"")
-											// Agregar el valor al file
-											fileValor += " " + valor
-											i = j
-											break
-									} else {
-											// Agregar el valor al file
-											fileValor += " " + valor
-									}
-							}
-							fileValores = append(fileValores, fileValor)
+		valor := (*comandoSeparado)[i]
+		bandera := obtenerBandera(valor)
+		banderaValor := obtenerValor(valor)
+		if strings.HasPrefix(bandera, "-file") {
+			file = true
+			// Verificar si el file tiene comillas
+			if strings.HasPrefix(banderaValor, "\"") && strings.HasSuffix(banderaValor, "\"") {
+				// Eliminar las comillas del inicio y del final
+				banderaValor = strings.TrimPrefix(banderaValor, "\"")
+				banderaValor = strings.TrimSuffix(banderaValor, "\"")
+				fileValores = append(fileValores, banderaValor)
+			} else if strings.HasPrefix(banderaValor, "\"") {
+				// Eliminar las comillas del inicio
+				banderaValor = strings.TrimPrefix(banderaValor, "\"")
+				// Inicializar fileValor con el valor actual
+				fileValor := banderaValor
+				// Iterar sobre el comando
+				for j := i + 1; j < len(*comandoSeparado); j++ {
+					valor := (*comandoSeparado)[j]
+					// Si el valor contiene comillas
+					if strings.HasSuffix(valor, "\"") {
+						// Eliminar las comillas del final
+						valor = strings.TrimSuffix(valor, "\"")
+						// Agregar el valor al file
+						fileValor += " " + valor
+						i = j
+						break
 					} else {
-							fileValores = append(fileValores, banderaValor)
+						// Agregar el valor al file
+						fileValor += " " + valor
 					}
+				}
+				fileValores = append(fileValores, fileValor)
 			} else {
-					fmt.Println("Parametro no reconocido: ", bandera)
-					respuesta += "Parametro no reconocido: " + bandera + "\n"
+				fileValores = append(fileValores, banderaValor)
 			}
+		} else {
+			fmt.Println("Parametro no reconocido: ", bandera)
+			respuesta += "Parametro no reconocido: " + bandera + "\n"
+		}
 	}
 	//Verificar si se ingreso el parametro obligatorio
 	if !file {
-			fmt.Println("No se ingreso el parametro obligatorio file")
-			respuesta += "No se ingreso el parametro obligatorio file\n"
-			return respuesta
+		fmt.Println("No se ingreso el parametro obligatorio file")
+		respuesta += "No se ingreso el parametro obligatorio file\n"
+		return respuesta
 	} else {
-			//Imprimir los valores y ejecutar el comando
-			for _, fileValor := range fileValores {
-					fmt.Println("File: ", fileValor)
-			}
-			//Llamar a la funcion para mostrar el contenido de los archivos
-			respuesta += Cat(fileValores)
-			return respuesta
+		//Imprimir los valores y ejecutar el comando
+		for _, fileValor := range fileValores {
+			fmt.Println("File: ", fileValor)
+		}
+		//Llamar a la funcion para mostrar el contenido de los archivos
+		respuesta += Cat(fileValores)
+		return respuesta
 	}
+}
+
+// AnalizarMkfile recibe un comando mkfile y lo analiza
+func AnalizarMkfile(comando *[]string) string {
+	var respuesta string
+	// Eliminar el primer valor del comando
+	*comando = (*comando)[1:]
+	// Booleanos para saber si se encontró el path, r, size, cont
+	var path, size bool
+	// Variables para guardar el valor del path, size, cont
+	var valorPath, valorSize, valorCont string
+	var valorR bool
+	// Iterar sobre el comando
+	for i := 0; i < len(*comando); i++ {
+		valor := (*comando)[i]
+		bandera := obtenerBandera(valor)
+		banderaValor := obtenerValor(valor)
+		if bandera == "-path" {
+				path = true
+				if strings.HasPrefix(banderaValor, "\"") {
+						valorPath = strings.TrimPrefix(banderaValor, "\"")
+						for j := i + 1; j < len(*comando); j++ {
+								valorPath += " " + (*comando)[j]
+								if strings.HasSuffix((*comando)[j], "\"") {
+										valorPath = strings.TrimSuffix(valorPath, "\"")
+										i = j
+										break
+								}
+						}
+				} else {
+						valorPath = banderaValor
+				}
+		} else if bandera == "-r" {
+				valorR = true
+
+		} else if bandera == "-size" {
+				valorSize = banderaValor
+				size = true
+		} else if bandera == "-cont" {
+
+				if strings.HasPrefix(banderaValor, "\"") {
+						valorCont = strings.TrimPrefix(banderaValor, "\"")
+						for j := i + 1; j < len(*comando); j++ {
+								valorCont += " " + (*comando)[j]
+								if strings.HasSuffix((*comando)[j], "\"") {
+										valorCont = strings.TrimSuffix(valorCont, "\"")
+										i = j
+										break
+								}
+						}
+				} else {
+						valorCont = banderaValor
+				}
+		} else {
+				fmt.Println("Error: Parámetro no reconocido")
+				respuesta += "Error: Parámetro no reconocido\n"
+		}
+}
+
+	// Validar los parámetros obligatorios
+	if !path {
+		return "Error: El parámetro -path es obligatorio"
+	}
+
+	// Convertir el tamaño a entero
+	var sizeInt int
+	if size {
+		var err error
+		sizeInt, err = strconv.Atoi(valorSize)
+		if err != nil || sizeInt < 0 {
+			return "Error: El parámetro -size debe ser un número entero no negativo"
+		}
+	}
+
+	// Crear la estructura MKFILE
+	mkfile := MKFILE{
+		Path: valorPath,
+		R:    valorR,
+		Size: sizeInt,
+		Cont: valorCont,
+	}
+
+	// Llamar a la función commandMkfile
+	err := commandMkfile(&mkfile)
+	if err != nil {
+		return fmt.Sprintf("Error: %v", err)
+	}
+
+	return "Archivo creado exitosamente"
+}
+
+
+// AnalizarMkdir recibe un comando mkdir y lo analiza
+func AnalizarMkdir(comando *[]string) string {
+	var respuesta string
+	// Eliminar el primer valor del comando
+	*comando = (*comando)[1:]
+	// Booleanos para saber si se encontró el path y p
+	var path, p bool
+	// Variables para guardar el valor del path
+	var valorPath string
+	// Iterar sobre el comando
+	for i := 0; i < len(*comando); i++ {
+		valor := (*comando)[i]
+		bandera := obtenerBandera(valor)
+		banderaValor := obtenerValor(valor)
+		if bandera == "-path" {
+				path = true
+				if strings.HasPrefix(banderaValor, "\"") {
+						valorPath = strings.TrimPrefix(banderaValor, "\"")
+						for j := i + 1; j < len(*comando); j++ {
+								valorPath += " " + (*comando)[j]
+								if strings.HasSuffix((*comando)[j], "\"") {
+										valorPath = strings.TrimSuffix(valorPath, "\"")
+										i = j
+										break
+								}
+						}
+				} else {
+						valorPath = banderaValor
+				}
+		} else if bandera == "-p" {
+				if banderaValor != "" {
+						return "Error: El parámetro -p no debe recibir ningún valor"
+				}
+				p = true
+		} else {
+				fmt.Println("Error: Parámetro no reconocido")
+				respuesta += "Error: Parámetro no reconocido\n"
+		}
+}
+
+	// Validar los parámetros obligatorios
+	if !path {
+			return "Error: El parámetro -path es obligatorio"
+	}
+
+	// Crear la estructura MKDIR
+	mkdir := MKDIR{
+			Path: valorPath,
+			P:    p,
+	}
+
+	// Llamar a la función commandMkdir
+	err := commandMkdir(&mkdir)
+	if err != nil {
+			return fmt.Sprintf("Error: %v", err)
+	}
+
+	return "Directorio creado exitosamente"
 }
 
 func obtenerBandera(bandera string) string {

@@ -67,6 +67,15 @@ login -user=root -pass=123 -id=811A
 #Debe dar error porque ya hay un usuario logeado
 login -user="mi usuario" -pass="mi pwd" -id=811A
 
+#-------------- mkfile ----------------------
+
+mkfile -size=5 -path=/home/josue/go/src/MIA_2S_P1_202202481/output/d.txt -r
+mkfile -cont=/home/josue/go/src/MIA_2S_P1_202202481/output/a.txt -path=/home/josue/go/src/MIA_2S_P1_202202481/output/e.txt -r
+
+#-------------- mkdir -----------------------
+
+mkdir -p -path=/home/josue/go/src/MIA_2S_P1_202202481/output/usac
+
 #--------------- rep ------------------------
 
 rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteDISK.pdf -name=disk
