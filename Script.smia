@@ -1,0 +1,96 @@
+#-------------- mkdisk -----------------
+
+#Crea un disco de 3000kb en la carpeta
+mkdisk -Size=3000 -unit=K -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia
+
+#No es necesario usar comillas para la ruta en este caso ya que la ruta no tiene ningun espacio en blanco
+mkdisk -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab2.mia -unit=k -size=3000
+
+#Se ponen comillas por la carpeta "mis discos" ya que tienen espacios en blanco, se crea si no existe
+mkdisk -size=5 -unit=M -path="/home/josue/go/src/MIA_2S_P1_202202481/output/mis discos/DiscoLab3.mia" 
+
+#Creara un disco de 10mb ya que no hay parametro unit
+mkdisk -size=10 -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab4.mia 
+
+#------------- rmdisk ---------------
+
+#Elimina DiscoLab4.mia
+rmdisk -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab4.mia
+
+#------------- fdisk -----------------
+
+#Crea una particion Primaria llamada Particion1 de 300kb
+#con el peor ajuste en el disco DiscoLab
+fdisk -Size=300 -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -name=Particion1
+
+#Crea una particion extendida dentro de DiscoLab de 300kb
+#Tienen el peor ajuste
+fdisk -type=E -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -unit=K -name=Particion2 -Size=300
+
+#Crea una particion logica con el mejor ajuste, llamada Particion3 de 200kb en el DiscoLab
+fdisk -Size=200 -type=L -unit=K -fit=BF -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -name=Particion3
+
+#Crea otra particion Primaria de 1000kb
+fdisk -type=P -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -name=Particion4 -unit=K -Size=1000
+
+#---------------- mount -----------------
+
+#Monta las particiones de DiscoLab.mia *carnet = 202202481
+mount -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -name=Particion1  #id=811A
+mount -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -name=Particion2 #id=812A
+mount -path=/home/josue/go/src/MIA_2S_P1_202202481/output/DiscoLab.mia -name=Particion3 #id=813A
+
+#---------------- mkfs -------------------
+
+#Realiza un formateo completo de la particion en el id 811A en ext2
+mkfs -type=full -id=811A
+
+#Realiza un formateo completo de la particion que ocupa el id 812A
+mkfs -id=812A
+
+#--------------- cat -----------------------
+#Lee el archivo a.txt
+cat -file1=/home/josue/go/src/MIA_2S_P1_202202481/output/a.txt 
+
+cat -file1="/home/josue/go/src/MIA_2S_P1_202202481/output/a.txt" -file2="/home/josue/go/src/MIA_2S_P1_202202481/output/b.txt" -file3="/home/josue/go/src/MIA_2S_P1_202202481/output/c.txt"
+
+#--------------- logout --------------------
+
+#termina la sesion del usuario pero en este caso deberia dar error porque no hay sesion actualmente
+logout
+
+#--------------- login ----------------------
+
+#Se logea en el sistema como usuario root
+login -user=root -pass=123 -id=811A 
+
+#Debe dar error porque ya hay un usuario logeado
+login -user="mi usuario" -pass="mi pwd" -id=811A
+
+#--------------- Mkgrp ----------------------
+mkgrp -name=usuarios
+mkgrp -name=usuarios
+mkgrp -name=adm
+mkgrp -name=mail
+mkgrp -name=news
+mkgrp -name=sys
+
+#-------------- mkfile ----------------------
+
+mkfile -size=5 -path=/home/josue/go/src/MIA_2S_P1_202202481/output/d.txt -r
+mkfile -cont=/home/josue/go/src/MIA_2S_P1_202202481/output/a.txt -path=/home/josue/go/src/MIA_2S_P1_202202481/output/e.txt -r
+
+#-------------- mkdir -----------------------
+
+mkdir -p -path=/home/josue/go/src/MIA_2S_P1_202202481/output/usac
+
+#--------------- rep ------------------------
+
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteDISK.pdf -name=disk
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteSB.pdf -name=sb
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteFILE.txt -path_file_ls=/users.txt -name=file
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteMBR.pdf -name=mbr 
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteINODE.pdf -name=inode
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteBLOCK.pdf -name=block
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteBMINODE.txt -name=bm_inode
+rep -id=811A -path=/home/josue/go/src/MIA_2S_P1_202202481/output/reporteBMBLOCK.txt -name=bm_block

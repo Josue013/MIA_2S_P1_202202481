@@ -15,6 +15,11 @@ type MKDIR struct {
 
 // Función para crear un directorio
 func commandMkdir(mkdir *MKDIR) error {
+    // Verificar que haya una sesión activa
+    if Usr_sesion.Uid == -1 {
+        return fmt.Errorf("Error: Necesita iniciar sesión")
+    }
+
     // Validar que la ruta padre existe, o crearla si el parámetro -p está presente
     parentDir := filepath.Dir(mkdir.Path)
     if _, err := os.Stat(parentDir); os.IsNotExist(err) {

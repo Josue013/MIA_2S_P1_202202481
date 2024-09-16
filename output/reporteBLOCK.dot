@@ -1,0 +1,13 @@
+digraph G {
+	rankdir=TB; // Dibujar el gráfico de arriba hacia abajo
+	node [shape=record, style=filled, fillcolor=lightblue, fontname="Helvetica", fontsize=10]; // Cambiar el estilo del nodo
+	edge [color=blue]; // Cambiar el color de las conexiones
+block0 [label="{FolderBlock|Contenido: \lNombre: .\lInodo: 0\l\lNombre: ..\lInodo: 0\l\lNombre: users.txt\lInodo: 1\l\l}"];
+block1 [label="{FileBlock|Contenido: \lContenido: 1,G,root
+1,U,root,root,123
+2,G,usuarios
+3,G,adm
+4,G,mail
+5,G,new\l}"];
+block0 -> block1;
+}

@@ -6,8 +6,10 @@ import (
 	"os"
 	"os/exec"
 	"path"
+	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // respuesta += ReporteDisk(idValor, pathValor)
@@ -1013,4 +1015,402 @@ func ReporteBmInode(id string, pathValor string) string {
 
 	fmt.Println("Archivo del bitmap de inodos generado:", pathValor)
 	return "Reporte BmInode creado con exito\n"
+}
+
+// REPORTE BmBlock
+func ReporteBmBlock(id string, pathValor string) string {
+	var respuesta string
+
+	fileName := path.Base(pathValor)
+	dirPath := strings.TrimSuffix(pathValor, fileName)
+	fmt.Println("Nombre del archivo: " + fileName)
+	fmt.Println("Ruta del archivo: " + dirPath)
+	// Crear el directorio si no existe
+	err := os.MkdirAll(dirPath, 0664)
+	if err != nil {
+			respuesta += "Error al crear el directorio\n"
+			fmt.Println("Error al crear el directorio")
+			return respuesta
+	}
+
+	// Buscar la particion montada
+	indice := VerificarParticionMontada(id)
+	if indice == -1 {
+			respuesta += "La particion no esta montada"
+			return respuesta
+	}
+
+	MountActual := particionesMontadas[indice]
+
+	// Abrir el archivo
+	archivo, err := os.OpenFile(MountActual.Path, os.O_RDWR, 0664)
+	if err != nil {
+			respuesta += "Error al abrir el archivo\n"
+			fmt.Println("Error al abrir el archivo")
+			return respuesta
+	}
+	defer archivo.Close()
+
+	// Leer el superbloque
+	superBloque := NewSuperBlock()
+	archivo.Seek(int64(MountActual.Start), 0)
+	err = binary.Read(archivo, binary.LittleEndian, &superBloque)
+	if err != nil {
+			respuesta += "Error al leer el superbloque\n"
+			fmt.Println("Error al leer el superbloque")
+			return respuesta
+	}
+
+	// Calcular el número total de bloques
+	totalBlocks := superBloque.S_blocks_count
+
+	// Obtener el contenido del bitmap de bloques
+	var bitmapContent strings.Builder
+
+	for i := int32(0); i < totalBlocks; i++ {
+			// Establecer el puntero en la posición del bitmap de bloques
+			archivo.Seek(int64(superBloque.S_bm_block_start)+int64(i), 0)
+			// Leer un byte (carácter '0' o '1')
+			var bit byte
+			err = binary.Read(archivo, binary.LittleEndian, &bit)
+			if err != nil {
+					respuesta += "Error al leer el bitmap de bloques\n"
+					fmt.Println("Error al leer el bitmap de bloques")
+					return respuesta
+			}
+			// Convertir el byte leído a '0' o '1'
+			if bit == 0 {
+					bitmapContent.WriteString("0")
+			} else {
+					bitmapContent.WriteString("1")
+			}
+			// Agregar un carácter de nueva línea cada 20 caracteres (20 bloques)
+			if (i+1)%20 == 0 {
+					bitmapContent.WriteString("\n")
+			}
+	}
+
+	// Crear el archivo TXT
+	txtFile, err := os.Create(pathValor)
+	if err != nil {
+			respuesta += "Error al crear el archivo TXT\n"
+			fmt.Println("Error al crear el archivo TXT")
+			return respuesta
+	}
+	defer txtFile.Close()
+
+	// Escribir el contenido del bitmap en el archivo TXT
+	_, err = txtFile.WriteString(bitmapContent.String())
+	if err != nil {
+			respuesta += "Error al escribir el archivo TXT\n"
+			fmt.Println("Error al escribir el archivo TXT")
+			return respuesta
+	}
+
+	fmt.Println("Archivo del bitmap de bloques generado:", pathValor)
+	return "Reporte BmBlock creado con exito\n"
+}
+
+
+// ReporteBlock genera un reporte de todos los bloques utilizados
+func ReporteBlock(id string, pathValor string) string {
+	// Buscar la partición montada
+	indice := VerificarParticionMontada(id)
+	if indice == -1 {
+			return "Error: La partición no está montada\n"
+	}
+	MountActual := particionesMontadas[indice]
+
+	// Abrir el archivo
+	archivo, err := os.OpenFile(MountActual.Path, os.O_RDWR, 0664)
+	if err != nil {
+			return "Error al abrir el archivo\n"
+	}
+	defer archivo.Close()
+
+	// Leer el superbloque
+	superBloque := NewSuperBlock()
+	archivo.Seek(int64(MountActual.Start), 0)
+	err = binary.Read(archivo, binary.LittleEndian, &superBloque)
+	if err != nil {
+			return "Error al leer el superbloque\n"
+	}
+
+	// Calcular el número total de bloques
+	totalBlocks := superBloque.S_blocks_count
+
+	// Obtener el contenido del bitmap de bloques
+	bitmap := make([]byte, totalBlocks)
+	archivo.Seek(int64(superBloque.S_bm_block_start), 0)
+	_, err = archivo.Read(bitmap)
+	if err != nil {
+			return "Error al leer el bitmap de bloques\n"
+	}
+
+	// Iniciar el contenido DOT
+Dot := `digraph G {
+	rankdir=TB; // Dibujar el gráfico de arriba hacia abajo
+	node [shape=record, style=filled, fillcolor=lightblue, fontname="Helvetica", fontsize=10]; // Cambiar el estilo del nodo
+	edge [color=blue]; // Cambiar el color de las conexiones
+`
+
+var previousBlock string
+
+// Iterar sobre cada bloque utilizado
+for i := int32(0); i < totalBlocks; i++ {
+	if bitmap[i] == 1 {
+			var tipoBloque string
+			var contenido string
+
+			// Leer el inodo correspondiente al bloque
+			inodo := Inodes{}
+			archivo.Seek(int64(superBloque.S_inode_start+i*int32(binary.Size(Inodes{}))), 0)
+			err = binary.Read(archivo, binary.LittleEndian, &inodo)
+			if err != nil {
+					return "Error al leer el Inodo\n"
+			}
+
+			// Determinar el tipo de bloque basado en el tipo de inodo
+			archivo.Seek(int64(superBloque.S_block_start+i*int32(binary.Size(FolderBlock{}))), 0)
+			if inodo.I_type[0] == '0' {
+					// Es un bloque de carpeta
+					tipoBloque = "FolderBlock"
+					folderBlock := FolderBlock{}
+					err = binary.Read(archivo, binary.LittleEndian, &folderBlock)
+					if err != nil {
+							return "Error al leer el FolderBlock\n"
+					}
+					contenido = formatFolderBlock(folderBlock)
+			} else if inodo.I_type[0] == '1' {
+					// Es un bloque de archivo
+					tipoBloque = "FileBlock"
+					fileBlock := Fileblock{}
+					err = binary.Read(archivo, binary.LittleEndian, &fileBlock)
+					if err != nil {
+							return "Error al leer el FileBlock\n"
+					}
+					contenido = formatFileBlock(fileBlock)
+			} else {
+					// Tipo de inodo desconocido
+					tipoBloque = "UnknownBlock"
+					contenido = "Tipo de bloque desconocido"
+			}
+
+			// Crear el nodo para el bloque actual
+			currentBlock := fmt.Sprintf("block%d", i)
+			Dot += fmt.Sprintf("%s [label=\"{%s|Contenido: \\l%s}\"];\n", currentBlock, tipoBloque, contenido)
+
+			// Si hay un bloque anterior, crear la conexión (edge)
+			if previousBlock != "" {
+					Dot += fmt.Sprintf("%s -> %s;\n", previousBlock, currentBlock)
+			}
+
+			previousBlock = currentBlock
+	}
+}
+
+Dot += "}\n"
+
+
+	// Crear el archivo .dot
+	dirPath := filepath.Dir(pathValor)
+	err = os.MkdirAll(dirPath, os.ModePerm)
+	if err != nil {
+			return "Error al crear el directorio para el reporte\n"
+	}
+
+	dotFilePath := strings.TrimSuffix(pathValor, filepath.Ext(pathValor)) + ".dot"
+	err = os.WriteFile(dotFilePath, []byte(Dot), 0644)
+	if err != nil {
+			return "Error al crear el archivo .dot\n"
+	}
+
+	// Generar el reporte en el formato especificado
+	extension := filepath.Ext(pathValor)
+	outputFilePath := strings.TrimSuffix(dotFilePath, ".dot") + extension
+	cmd := exec.Command("dot", "-T"+extension[1:], dotFilePath, "-o", outputFilePath)
+	err = cmd.Run()
+	if err != nil {
+			return "Error al generar el reporte\n"
+	}
+
+	return "Reporte Block generado con éxito: " + outputFilePath + "\n"
+}
+
+// Función auxiliar para formatear el contenido de un FolderBlock
+func formatFolderBlock(folderBlock FolderBlock) string {
+	var contenido string
+	for _, content := range folderBlock.B_content {
+			if content.B_inodo != -1 {
+					contenido += fmt.Sprintf("Nombre: %s\\lInodo: %d\\l\\l", strings.TrimRight(string(content.B_name[:]), "\x00"), content.B_inodo)
+			}
+	}
+	return contenido
+}
+
+// Función auxiliar para formatear el contenido de un Fileblock
+func formatFileBlock(fileBlock Fileblock) string {
+	return fmt.Sprintf("Contenido: %s\\l", strings.TrimRight(string(fileBlock.B_content[:]), "\x00"))
+}
+
+
+
+// ReporteLs genera un reporte de archivos y carpetas
+func ReporteLs(id string, pathValor string, pathFileLs string) string {
+	// Buscar la partición montada
+	indice := VerificarParticionMontada(id)
+	if indice == -1 {
+			return "Error: La partición no está montada\n"
+	}
+	MountActual := particionesMontadas[indice]
+
+	// Abrir el archivo
+	archivo, err := os.OpenFile(MountActual.Path, os.O_RDWR, 0664)
+	if err != nil {
+			return "Error al abrir el archivo\n"
+	}
+	defer archivo.Close()
+
+	// Leer el superbloque
+	superBloque := NewSuperBlock()
+	archivo.Seek(int64(MountActual.Start), 0)
+	err = binary.Read(archivo, binary.LittleEndian, &superBloque)
+	if err != nil {
+			return "Error al leer el superbloque\n"
+	}
+
+	// Buscar el inodo correspondiente a la ruta especificada
+	numeroInodo := BuscarInodo(pathFileLs, MountActual, superBloque, archivo)
+	if numeroInodo == -1 {
+			return "Error: No se encontró el inodo para la ruta especificada\n"
+	}
+
+	// Leer el inodo
+	inodo := NewInodes()
+	archivo.Seek(int64(superBloque.S_inode_start+int32(numeroInodo)*int32(binary.Size(Inodes{}))), 0)
+	err = binary.Read(archivo, binary.LittleEndian, &inodo)
+	if err != nil {
+			return "Error al leer el inodo\n"
+	}
+
+	// Leer el archivo users.txt para obtener los usuarios y grupos
+	usersContent := LeerArchivo(BuscarInodo("/users.txt", MountActual, superBloque, archivo), superBloque, archivo)
+	usersMap := parseUsers(usersContent)
+
+	// Generar el contenido del reporte
+	contenido := "digraph G {\n"
+	contenido += "\tnode [shape=plaintext]\n"
+	contenido += "\tTabla [label=<\n"
+	contenido += "\t\t<TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\">\n"
+	contenido += "\t\t\t<TR><TD>Permisos</TD><TD>Owner</TD><TD>Grupo</TD><TD>Size (en Bytes)</TD><TD>Fecha</TD><TD>Hora</TD><TD>Tipo</TD><TD>Name</TD></TR>\n"
+
+	// Obtener la información de los archivos y carpetas
+	for _, i := range inodo.I_block {
+			if i != -1 {
+					var folderBlock FolderBlock
+					archivo.Seek(int64(superBloque.S_block_start+int32(i)*int32(binary.Size(FolderBlock{}))), 0)
+					err = binary.Read(archivo, binary.LittleEndian, &folderBlock)
+					if err != nil {
+							return "Error al leer el bloque de carpeta\n"
+					}
+
+					for _, content := range folderBlock.B_content {
+							if content.B_inodo != -1 {
+									nombre := strings.TrimRight(string(content.B_name[:]), "\x00")
+									inodoArchivo := NewInodes()
+									archivo.Seek(int64(superBloque.S_inode_start+int32(content.B_inodo)*int32(binary.Size(Inodes{}))), 0)
+									err = binary.Read(archivo, binary.LittleEndian, &inodoArchivo)
+									if err != nil {
+											return "Error al leer el inodo del archivo\n"
+									}
+
+									// Obtener permisos en formato rwx
+									permisos := formatPermisos(inodoArchivo.I_perm)
+
+									// Obtener propietario y grupo
+									propietario := usersMap[int(inodoArchivo.I_uid)]
+									grupo := usersMap[int(inodoArchivo.I_gid)]
+
+									// Obtener tamaño
+									size := inodoArchivo.I_size
+
+									// Obtener fechas y horas
+									fechaHora := time.Unix(int64(binary.LittleEndian.Uint64(inodoArchivo.I_mtime[:])), 0)
+									fecha := fechaHora.Format("02/01/2006")
+									hora := fechaHora.Format("15:04")
+
+									// Obtener tipo
+									tipo := "Archivo"
+									if inodoArchivo.I_type[0] == '0' {
+											tipo = "Carpeta"
+									}
+
+									// Agregar la información a la tabla
+									contenido += fmt.Sprintf("\t\t\t<TR><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%d</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD><TD>%s</TD></TR>\n",
+											permisos, propietario, grupo, size, fecha, hora, tipo, nombre)
+							}
+					}
+			}
+	}
+
+	contenido += "\t\t</TABLE>\n"
+	contenido += "\t>]\n"
+	contenido += "}\n"
+
+	// Crear el archivo .dot
+	dirPath := filepath.Dir(pathValor)
+	err = os.MkdirAll(dirPath, os.ModePerm)
+	if err != nil {
+			return "Error al crear el directorio para el reporte\n"
+	}
+
+	dotFilePath := strings.TrimSuffix(pathValor, filepath.Ext(pathValor)) + ".dot"
+	err = os.WriteFile(dotFilePath, []byte(contenido), 0644)
+	if err != nil {
+			return "Error al crear el archivo .dot\n"
+	}
+
+	// Generar el reporte en el formato especificado
+	extension := filepath.Ext(pathValor)
+	outputFilePath := strings.TrimSuffix(dotFilePath, ".dot") + extension
+	cmd := exec.Command("dot", "-T"+extension[1:], dotFilePath, "-o", outputFilePath)
+	err = cmd.Run()
+	if err != nil {
+			return "Error al generar el reporte\n"
+	}
+
+	return "Reporte generado con éxito: " + outputFilePath + "\n"
+}
+
+// Función auxiliar para formatear los permisos
+func formatPermisos(perm int32) string {
+	result := ""
+	bits := []byte{'r', 'w', 'x'}
+	for i := 8; i >= 0; i-- {
+			if perm&(1<<uint(i)) != 0 {
+					result += string(bits[i%3])
+			} else {
+					result += "-"
+			}
+	}
+	return result
+}
+
+// Función auxiliar para parsear el archivo users.txt y obtener un mapa de UID/GID a nombres
+func parseUsers(content string) map[int]string {
+	usersMap := make(map[int]string)
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+			if len(line) > 0 {
+					parts := strings.Split(line, ",")
+					if parts[1] == "U" {
+							uid, _ := strconv.Atoi(parts[0])
+							usersMap[uid] = parts[3]
+					} else if parts[1] == "G" {
+							gid, _ := strconv.Atoi(parts[0])
+							usersMap[gid] = parts[2]
+					}
+			}
+	}
+	return usersMap
 }

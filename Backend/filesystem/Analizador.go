@@ -127,7 +127,15 @@ func AnalizarComando(comando string) string {
 				comandoSeparadoString := strings.Join(comandoSeparado, " ")
 				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
 				return respuesta //Terminar la funcion
-			} else if valor == "mkfile" {
+			} else if valor == "mkgrp" {
+				fmt.Println("====== Comando mkgrp ======")
+				respuesta += "Ejecutando comando mkgrp\n"
+				//Analizar el comando mkgrp
+				respuesta += AnalizarMkgrp(&comandoSeparado) + "\n"
+				//Pasar a string el comando separado
+				comandoSeparadoString := strings.Join(comandoSeparado, " ")
+				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
+			}else if valor == "mkfile" {
 				fmt.Println("====== Comando mkfile ======")
 				respuesta += "Ejecutando comando mkfile\n"
 				//Analizar el comando mkfile
@@ -893,6 +901,31 @@ func AnalizarRep(comandoSeparado *[]string) string {
 			//Ejecutar el comando
 			respuesta += ReporteBmInode(idValor, pathValor)
 			return respuesta
+		} else if nameValor == "bm_block" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteBmBlock(idValor, pathValor)
+			return respuesta
+		} else if nameValor == "block" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			//Ejecutar el comando
+			respuesta += ReporteBlock(idValor, pathValor)
+			return respuesta
+		}	else if nameValor == "ls" {
+			//Imprimir los valores y ejecutar el comando
+			fmt.Println("id: ", idValor)
+			fmt.Println("name: ", nameValor)
+			fmt.Println("path: ", pathValor)
+			fmt.Println("path_file_ls: ", path_file_fsValor)
+			//Ejecutar el comando
+			respuesta += ReporteLs(idValor, pathValor, path_file_fsValor)
+			return respuesta
 		} else {
 			fmt.Println("Los valores de name deben ser: disk, sb, tree o file")
 			respuesta += "Los valores de name deben ser: disk, sb, tree o file\n"
@@ -1136,6 +1169,45 @@ func AnalizarMkdir(comando *[]string) string {
 	return "Directorio creado exitosamente"
 }
 
+// AnalizarMkgrp recibe un comando mkgrp y lo analiza
+func AnalizarMkgrp(comando *[]string) string {
+	var respuesta string
+	// Eliminar el primer valor del comando
+	*comando = (*comando)[1:]
+	// Booleanos para saber si se encontró el name
+	var name bool
+	// Variables para guardar el valor del name
+	var valorName string
+	// Iterar sobre el comando
+	for i := 0; i < len(*comando); i++ {
+			bandera := obtenerBandera((*comando)[i])
+			banderaValor := obtenerValor((*comando)[i])
+			if bandera == "-name" {
+					name = true
+					valorName = banderaValor
+			} else {
+					respuesta += "Error: Parámetro no reconocido\n"
+					return respuesta
+			}
+	}
+
+	// Validar los parámetros obligatorios
+	if !name {
+			respuesta += "Error: Falta el parámetro -name\n"
+			return respuesta
+	}
+
+	// Crear la estructura MKGRP
+	mkgrp := MKGRP{
+			Name: valorName,
+	}
+
+	// Llamar a la función commandMkgrp
+	respuesta = commandMkgrp(&mkgrp)
+
+	return respuesta
+}
+
 func obtenerBandera(bandera string) string {
 	//-size
 	var banderaValor string
@@ -1162,3 +1234,5 @@ func obtenerValor(bandera string) string {
 	}
 	return banderaValor
 }
+
+
