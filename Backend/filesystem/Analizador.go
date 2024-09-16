@@ -135,7 +135,15 @@ func AnalizarComando(comando string) string {
 				//Pasar a string el comando separado
 				comandoSeparadoString := strings.Join(comandoSeparado, " ")
 				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
-			}else if valor == "mkfile" {
+			} else if valor == "rmgrp" {
+				fmt.Println("====== Comando rmgrp ======")
+				respuesta += "Ejecutando comando rmgrp\n"
+				//Analizar el comando rmgrp
+				respuesta += AnalizarRmgrp(&comandoSeparado) + "\n"
+				//Pasar a string el comando separado
+				comandoSeparadoString := strings.Join(comandoSeparado, " ")
+				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
+			} else if valor == "mkfile" {
 				fmt.Println("====== Comando mkfile ======")
 				respuesta += "Ejecutando comando mkfile\n"
 				//Analizar el comando mkfile
@@ -1204,6 +1212,45 @@ func AnalizarMkgrp(comando *[]string) string {
 
 	// Llamar a la función commandMkgrp
 	respuesta = commandMkgrp(&mkgrp)
+
+	return respuesta
+}
+
+// AnalizarRmgrp recibe un comando rmgrp y lo analiza
+func AnalizarRmgrp(comando *[]string) string {
+	var respuesta string
+	// Eliminar el primer valor del comando
+	*comando = (*comando)[1:]
+	// Booleanos para saber si se encontró el name
+	var name bool
+	// Variables para guardar el valor del name
+	var valorName string
+	// Iterar sobre el comando
+	for i := 0; i < len(*comando); i++ {
+			bandera := obtenerBandera((*comando)[i])
+			banderaValor := obtenerValor((*comando)[i])
+			if bandera == "-name" {
+					name = true
+					valorName = banderaValor
+			} else {
+					respuesta += "Error: Parámetro no reconocido\n"
+					return respuesta
+			}
+	}
+
+	// Validar los parámetros obligatorios
+	if !name {
+			respuesta += "Error: Falta el parámetro -name\n"
+			return respuesta
+	}
+
+	// Crear la estructura RMGRP
+	rmgrp := RMGRP{
+			Name: valorName,
+	}
+
+	// Llamar a la función commandRmgrp
+	respuesta = commandRmgrp(&rmgrp)
 
 	return respuesta
 }

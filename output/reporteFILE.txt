@@ -1,6 +1,6 @@
 1,G,root
 1,U,root,root,123
-2,G,usuarios
+0,G,usuarios
 3,G,adm
-4,G,mail
+0,G,mail
 5,G,new
