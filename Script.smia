@@ -78,6 +78,9 @@ mkgrp -name=sys
 #--------------- Rmgrp -----------------------
 rmgrp -name=usuarios
 
+#--------------- Mkusr -----------------------
+mkusr -user=user1 -pass=usuario -grp=usuarios
+
 #-------------- mkfile ----------------------
 
 mkfile -size=5 -path=/home/josue/go/src/MIA_2S_P1_202202481/output/d.txt -r

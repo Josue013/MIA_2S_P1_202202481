@@ -2,5 +2,5 @@
 1,U,root,root,123
 0,G,usuarios
 3,G,adm
-0,G,mail
+4,G,mail
 5,G,new

@@ -143,6 +143,14 @@ func AnalizarComando(comando string) string {
 				//Pasar a string el comando separado
 				comandoSeparadoString := strings.Join(comandoSeparado, " ")
 				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
+			} else if valor == "mkusr" {
+				fmt.Println("====== Comando mkusr ======")
+				respuesta += "Ejecutando comando mkusr\n"
+				//Analizar el comando mkusr
+				respuesta += AnalizarMkusr(&comandoSeparado) + "\n"
+				//Pasar a string el comando separado
+				comandoSeparadoString := strings.Join(comandoSeparado, " ")
+				respuesta += AnalizarComando(comandoSeparadoString) + "\n"
 			} else if valor == "mkfile" {
 				fmt.Println("====== Comando mkfile ======")
 				respuesta += "Ejecutando comando mkfile\n"
@@ -1251,6 +1259,59 @@ func AnalizarRmgrp(comando *[]string) string {
 
 	// Llamar a la función commandRmgrp
 	respuesta = commandRmgrp(&rmgrp)
+
+	return respuesta
+}
+
+// AnalizarMkusr recibe un comando mkusr y lo analiza
+func AnalizarMkusr(comando *[]string) string {
+	var respuesta string
+	// Eliminar el primer valor del comando
+	*comando = (*comando)[1:]
+	// Booleanos para saber si se encontró el name, pwd, grp
+	var name, pwd, grp bool
+	// Variables para guardar el valor del name, pwd, grp
+	var valorName, valorPwd, valorGrp string
+	// Iterar sobre el comando
+	for i := 0; i < len(*comando); i++ {
+			bandera := obtenerBandera((*comando)[i])
+			banderaValor := obtenerValor((*comando)[i])
+			if bandera == "-user" {
+					name = true
+					valorName = banderaValor
+			} else if bandera == "-pass" {
+					pwd = true
+					valorPwd = banderaValor
+			} else if bandera == "-grp" {
+					grp = true
+					valorGrp = banderaValor
+			} else {
+					respuesta += "Error: Parámetro no reconocido\n"
+					return respuesta
+			}
+	}
+
+	// Validar los parámetros obligatorios
+	if !name {
+			respuesta += "Error: Falta el parámetro -name\n"
+			return respuesta
+	} else if !pwd {
+			respuesta += "Error: Falta el parámetro -pwd\n"
+			return respuesta
+	} else if !grp {
+			respuesta += "Error: Falta el parámetro -grp\n"
+			return respuesta
+	}
+
+	// Crear la estructura MKUSR
+	mkusr := MKUSR{
+			User: valorName,
+			Pass:  valorPwd,
+			Grp:  valorGrp,
+	}
+
+	// Llamar a la función commandMkusr
+	respuesta = commandMkusr(&mkusr)
 
 	return respuesta
 }

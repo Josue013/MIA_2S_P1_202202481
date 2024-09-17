@@ -7,7 +7,7 @@ block1 [label="{FileBlock|Contenido: \lContenido: 1,G,root
 1,U,root,root,123
 0,G,usuarios
 3,G,adm
-0,G,mail
+4,G,mail
 5,G,new\l}"];
 block0 -> block1;
 }

@@ -4,11 +4,11 @@ digraph G {
 					<table border="0" cellborder="1" cellspacing="0">
 							<tr><td colspan="2" bgcolor="indigo"><font color="white">REPORTE MBR</font></td></tr>
 							<tr><td>mbr_tamano</td><td>3072000</td></tr>
-							<tr><td bgcolor="plum2">mbr_fecha_creacion</td><td bgcolor="plum2">2024-09-16 00:54:45</td></tr>
-							<tr><td>mbr_disk_signature</td><td>60</td></tr>
+							<tr><td bgcolor="plum2">mbr_fecha_creacion</td><td bgcolor="plum2">2024-09-16 18:36:31</td></tr>
+							<tr><td>mbr_disk_signature</td><td>83</td></tr>
 	
 					<tr><td colspan="2" bgcolor="#f07d7d"> PARTICIÓN 1 </td></tr>
-					<tr><td>part_status</td><td>0</td></tr>
+					<tr><td>part_status</td><td>1</td></tr>
 					<tr><td bgcolor="#f5b4af">part_type</td><td bgcolor="#f5b4af">p</td></tr>
 					<tr><td>part_fit</td><td>f</td></tr>
 					<tr><td bgcolor="#f5b4af">part_start</td><td bgcolor="#f5b4af">169</td></tr>
@@ -16,7 +16,7 @@ digraph G {
 					<tr><td bgcolor="#f5b4af">part_name</td><td bgcolor="#f5b4af">Particion1</td></tr>
 			
 					<tr><td colspan="2" bgcolor="#f07d7d"> PARTICIÓN 2 </td></tr>
-					<tr><td>part_status</td><td>0</td></tr>
+					<tr><td>part_status</td><td>1</td></tr>
 					<tr><td bgcolor="#f5b4af">part_type</td><td bgcolor="#f5b4af">e</td></tr>
 					<tr><td>part_fit</td><td>f</td></tr>
 					<tr><td bgcolor="#f5b4af">part_start</td><td bgcolor="#f5b4af">307370</td></tr>
